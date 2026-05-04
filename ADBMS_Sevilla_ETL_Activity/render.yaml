@@ -1,9 +1,9 @@
 services:
-  - type: worker
+  - type: web
     name: sevilla-etl
     runtime: docker
     dockerfilePath: ./ADBMS_Sevilla_ETL_Activity/Dockerfile
     dockerContext: ./ADBMS_Sevilla_ETL_Activity
     envVars:
       - key: DATABASE_URL
-        sync: false   # You will paste your Render PostgreSQL URL here
+        sync: false
