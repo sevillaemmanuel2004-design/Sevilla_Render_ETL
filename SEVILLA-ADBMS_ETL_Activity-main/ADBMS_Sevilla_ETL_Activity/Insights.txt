@@ -1,0 +1,32 @@
+Insights:
+
+1. Japan generates higher revenue per transaction than Myanmar.
+    Although both countries have a similar number of transactions, 
+    Japan’s average transaction value is higher due to higher unit prices after 
+    currency standardization.
+
+    This suggests stronger purchasing power or higher-priced product offerings in the Japan store.
+
+2. A small number of products account for most sales volume.
+    A limited set of products dominates total sales quantity across both countries.
+
+    Inventory and marketing efforts can focus on these high-performing products to maximize revenue.
+
+3. Payment preferences differ between countries.
+    Customers in Japan and Myanmar favor different payment methods, 
+    indicating distinct consumer behavior patterns.
+
+    Payment infrastructure and promotions should be tailored per country.
+
+4. Certain branches consistently outperform others.
+    Sales activity is concentrated in specific branches, 
+    with some locations handling significantly more transactions than others.
+
+    High-performing branches can be used as benchmarks, 
+    while low-performing ones may require operational improvements.
+
+5.Product categories show different demand patterns across countries
+   Some product categories are more popular in one country than the other, 
+   reflecting local consumer preferences.
+   
+   Product assortment should be localized to match demand. 

@@ -1,0 +1,26 @@
+use sqllite for database
+use pandas for simpler data transformation
+Data exist in the staging, transformation, and presentation layers. These represent sample expected outcomes of the ETL process.
+and you are free to adjust or enhance them as you see fit.
+
+Source Datasets:
+	Japan Store
+	Myanmar Store
+
+Extract
+	from source to staging area
+	Load both source datasets from CSV files into the SQL database.
+
+Transform
+	from staging area to transformation area
+	Perform data cleaning (removing nulls, correcting data types, handling inconsistencies).
+	Standardize values across datasets (e.g., Japan store item prices in JPY and Myanmar store item prices in USD are converted to a common currency or format).
+
+Load
+	from transformation area to presentation area
+	Combine the transformed datasets into a single consolidated table in the SQL database.
+
+Analytics
+	give 5 insights in the final data
+
+
