@@ -1,35 +1,34 @@
-import sqlite3
+import os
 import pandas as pd
-from pathlib import Path
+from sqlalchemy import create_engine, text
 
-TRANSFORMATION_PATH = Path("data/Transformation")
-PRESENTATION_PATH = Path("data/Presentation")
-PRESENTATION_PATH.mkdir(parents=True, exist_ok=True)
+DATABASE_URL = os.environ["DATABASE_URL"]
+
+def get_engine():
+    return create_engine(DATABASE_URL)
 
 def load_to_presentation():
-    transform_conn = sqlite3.connect(
-        TRANSFORMATION_PATH / "transformation layer.db"
-    )
-    presentation_conn = sqlite3.connect(
-        PRESENTATION_PATH / "BIG TABLE.db"
-    )
+    engine = get_engine()
 
-    japan = pd.read_sql("SELECT * FROM japan_transformed", transform_conn)
-    myanmar = pd.read_sql("SELECT * FROM myanmar_transformed", transform_conn)
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS presentation"))
+        conn.commit()
+
+    japan = pd.read_sql("SELECT * FROM transformation.japan_transformed", engine)
+    myanmar = pd.read_sql("SELECT * FROM transformation.myanmar_transformed", engine)
 
     big_table = pd.concat([japan, myanmar], ignore_index=True)
 
     big_table.to_sql(
         "consolidated_sales",
-        presentation_conn,
+        engine,
+        schema="presentation",
         if_exists="replace",
         index=False
     )
 
-    transform_conn.close()
-    presentation_conn.close()
-
-    print("Final consolidated table created.")
+    print(f"Final consolidated table created → presentation.consolidated_sales ({len(big_table)} rows)")
+    engine.dispose()
 
 if __name__ == "__main__":
     load_to_presentation()
