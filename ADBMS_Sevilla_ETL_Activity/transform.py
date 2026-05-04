@@ -1,21 +1,31 @@
-import sqlite3
+import os
 import pandas as pd
-from pathlib import Path
+from sqlalchemy import create_engine, text
 
-STAGING_PATH = Path("data/Staging")
-TRANSFORMATION_PATH = Path("data/Transformation")
-TRANSFORMATION_PATH.mkdir(parents=True, exist_ok=True)
-
+DATABASE_URL = os.environ["DATABASE_URL"]
 JPY_PER_USD = 150  # fixed conversion
 
-def transform_store(staging_db, country):
-    staging_conn = sqlite3.connect(STAGING_PATH / staging_db)
-    transform_conn = sqlite3.connect(TRANSFORMATION_PATH / "transformation layer.db")
+def get_engine():
+    return create_engine(DATABASE_URL)
 
-    sales = pd.read_sql("SELECT * FROM sales_data", staging_conn)
-    items = pd.read_sql(f"SELECT * FROM {country}_items", staging_conn)
+def transform_store(country):
+    engine = get_engine()
 
-    # Clean column names (remove quotes + normalize)
+    with engine.connect() as conn:
+        conn.execute(text("CREATE SCHEMA IF NOT EXISTS transformation"))
+        conn.commit()
+
+    # Table names are derived from CSV filenames: {prefix}_{stem_lowercase}
+    # sales_data.csv -> {country}_sales_data
+    # japan_items.csv -> japan_japan_items  |  myanmar_items.csv -> myanmar_myanmar_items
+    sales = pd.read_sql(
+        f"SELECT * FROM staging.{country}_sales_data", engine
+    )
+    items = pd.read_sql(
+        f"SELECT * FROM staging.{country}_{country}_items", engine
+    )
+
+    # Clean column names
     sales.columns = sales.columns.str.replace("'", "").str.lower()
     items.columns = items.columns.str.lower()
 
@@ -23,13 +33,8 @@ def transform_store(staging_db, country):
     sales.dropna(inplace=True)
     items.dropna(inplace=True)
 
-    # Merge
-    df = sales.merge(
-        items,
-        left_on="product_id",
-        right_on="id",
-        how="left"
-    )
+    # Merge on product_id / id
+    df = sales.merge(items, left_on="product_id", right_on="id", how="left")
 
     # Currency standardization
     if country == "japan":
@@ -39,17 +44,17 @@ def transform_store(staging_db, country):
 
     df["country"] = country.capitalize()
 
-    # Save transformed data
     df.to_sql(
         f"{country}_transformed",
-        transform_conn,
+        engine,
+        schema="transformation",
         if_exists="replace",
         index=False
     )
 
-    staging_conn.close()
-    transform_conn.close()
+    print(f"Transformed {country} → transformation.{country}_transformed ({len(df)} rows)")
+    engine.dispose()
 
 if __name__ == "__main__":
-    transform_store("japan staging area.db", "japan")
-    transform_store("myanmar staging area.db", "myanmar")
+    transform_store("japan")
+    transform_store("myanmar")

@@ -14,8 +14,7 @@ if __name__ == "__main__":
         run_script("extract.py")
         run_script("transform.py")
         run_script("load.py")
-
         print("\nETL pipeline finished successfully!")
-
     except subprocess.CalledProcessError as e:
-        print(f"\nETL failed while running {e.cmd}")
+        print(f"\nETL failed while running: {e.cmd}")
+        sys.exit(1)
