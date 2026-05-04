@@ -227,15 +227,15 @@ HTML_PAGE = """<!DOCTYPE html>
 </head>
 <body>
   <div class="card">
-    <h1>🗄️ ETL Pipeline</h1>
+    <h1>ETL Pipeline</h1>
     <p class="subtitle">Sevilla ADBMS Activity &mdash; PostgreSQL on Render</p>
 
     <div class="pipeline">
-      <div class="step"><span>📂</span>Extract</div>
+      <div class="step">Extract</div>
       <div class="arrow">→</div>
-      <div class="step"><span>⚙️</span>Transform</div>
+      <div class="step">Transform</div>
       <div class="arrow">→</div>
-      <div class="step"><span>🗃️</span>Load</div>
+      <div class="step">Load</div>
     </div>
 
     <button class="btn" id="runBtn" onclick="runETL()">▶ Run ETL Pipeline</button>
